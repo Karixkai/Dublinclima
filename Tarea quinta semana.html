@@ -1,0 +1,179 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Karen Weather <applet></applet></title>
+    <style>
+    body{
+        margin-top: 100px;
+        margin-left:300px ;
+        margin-right:300px ;
+        margin-bottom: 100px;
+        padding-top: 10px;
+        text-align: center;
+        border-radius: 30px;
+        border: 1px solid #A28C98;
+        font-size: 29px;
+    }
+    .emoji{
+      font-size: 90px;
+    }
+.form-control.rounded{
+  margin-top: 20px;
+width: 50%;
+}
+#cel,#far{
+  color:#5BA0CA;
+  cursor:pointer;
+  text-shadow: #A28C98;
+}
+.caracteristics{
+  margin-top: 10px;
+}
+
+ul{
+  list-style: none;
+}
+li{
+  display: inline-block;
+  margin-top: 50px;
+  padding-right: 100px;
+  margin-bottom: 10px;
+}
+   </style>
+  </head>
+  <body>
+    <div class="input-group">
+  <input  type="search" class="form-control rounded" placeholder="What is your city?" aria-label="Search" aria-describedby="search-addon" id="cityname" />
+  <button type="button" class="btn btn-outline-primary" id="button1">Search</button> 
+  <button type="button" class="btn btn-outline-success" id="button2">Current</button>
+</div>
+    <h1 id ="city">Dublin</h1>
+    <h3><span id="weekday">Thursday  12:42 </span></h3>
+    <div class="emoji" >☀️</div>
+    <h2> <span id="grade">19</span> <span id="cel">°C</span> | <span id="far">°F</span></h2>
+
+    <div class="caracteristics">
+        Humidity:<span id="humidity"></span>
+        Wind:<span id="wind"></span> km/h
+    </div>
+    <ul>
+      <li>🌧️
+        <br />
+        Monday
+        <br />
+        12Cº 
+      </li>
+      <li>☀️
+        <br />
+        Tuesday
+        <br />
+        23Cº</li>
+      <li>☀️
+        <br />
+        Wednesday
+        <br />
+        15Cº</li>
+      <li>⛈️
+        <br />
+        Thurday
+        <br />
+        17Cº
+      </li>
+      <li>⛈️
+        <br />
+        Friday
+        <br />
+        18Cº
+      </li>
+    </ul>
+    <script>
+      let now = new Date();
+      let days =["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      let day= days[ now.getDay()];
+      let weekday =document.querySelector("#weekday");
+      let currentminutes = now.getMinutes();
+      currentminutes = ("0" + currentminutes).slice(-2);
+      let currentHours = now.getHours();
+      currentHours = ("0" + currentHours).slice(-2);
+      let currentime = `${day} ${currentHours}:${currentminutes}`;
+      weekday.innerHTML = currentime;
+
+
+  function displayWeatherCondition(response) {
+  document.querySelector("#city").innerHTML = response.data.name;
+  document.querySelector("#grade").innerHTML = Math.round(
+  response.data.main.temp);
+  console.log(response);
+  document.querySelector("#humidity").innerHTML = response.data.main.humidity;
+  document.querySelector("#wind").innerHTML = Math.round(
+    response.data.wind.speed
+  );
+  }
+
+
+  function searchCity(city) {
+  if (city.length == 0){
+    alert("Please write a city");
+    return;
+
+  }
+  let apiKey = "88f711e799b7cf72786d772cd4b3bcca";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  axios.get(apiUrl).then(displayWeatherCondition);
+  }
+  
+  function submit(event) {
+  event.preventDefault();
+  let city = document.querySelector("#cityname").value;
+  searchCity(city);
+}
+
+
+function searchlocation(position) {
+  let apiKey = "88f711e799b7cf72786d772cd4b3bcca";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${apiKey}&units=metric`;
+
+  axios.get(apiUrl).then(displayWeatherCondition);
+}
+
+function getCurrentLocation(event) {
+  event.preventDefault();
+  navigator.geolocation.getCurrentPosition(searchlocation);
+}
+
+
+function celcius(event){
+      
+ event.preventDefault();
+  let grade = document.querySelector("#grade");
+  grade.innerHTML = "40";
+}
+
+function faren(event){
+  event.preventDefault();
+  let grade2 = document.querySelector("#grade");
+  grade2.innerHTML="104";
+}
+
+let farlink=document.querySelector("#far");
+farlink.addEventListener("click",faren);
+
+let cellink= document.querySelector("#cel");
+cellink.addEventListener("click",celcius);   
+
+
+let searchForm = document.querySelector("#button1");
+searchForm.addEventListener("click", submit);
+
+let LocationButton = document.querySelector("#button2");
+LocationButton.addEventListener("click", getCurrentLocation);
+
+searchCity("Dublin");
+
+    </script>
+  </body>
+</html>
